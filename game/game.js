@@ -18,8 +18,8 @@ Game.prototype.deleteGameIfEmpty = function() {
     // Handle dev game
     if (this.code === "ffff") return;
 
-    var allPlayersDisconnected = true;
-    for (var j = 0; j < this.players.length; j++) {
+    let allPlayersDisconnected = true;
+    for (let j = 0; j < this.players.length; j++) {
         if (this.players[j].isConnected) {
             allPlayersDisconnected = false;
             break;

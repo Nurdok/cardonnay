@@ -1,4 +1,4 @@
-var Game = require("./game");
+const Game = require("./game");
 
 function GameList(devModeEnabled) {
     this.games = [];
@@ -14,15 +14,15 @@ function GameList(devModeEnabled) {
 GameList.prototype.newGame = function(forceCode) {
     if (this.locked) return false;
 
-    var newCode;
+    let newCode;
     if (forceCode) {
         newCode = forceCode;
     } else {
         newCode = this.generateCode();
     }
 
-    var self = this;
-    var newGame = new Game(newCode, function() {
+    let self = this;
+    let newGame = new Game(newCode, function() {
         //will be ran when this game has 0 players left
         self.removeGame(newCode);
     });
@@ -34,7 +34,7 @@ GameList.prototype.newGame = function(forceCode) {
 GameList.prototype.findGame = function(code) {
     if (!code || code.length !== 4) return false;
 
-    for (var i = 0; i < this.games.length; i++) {
+    for (let i = 0; i < this.games.length; i++) {
         if (this.games[i].code === code.toLowerCase()) {
             return this.games[i];
         }
@@ -43,12 +43,12 @@ GameList.prototype.findGame = function(code) {
 };
 
 GameList.prototype.generateCode = function() {
-    var code;
+    let code;
     do {
         //generate 4 letter code
         code = "";
-        var possible = "abcdefghijklmnopqrstuvwxyz";
-        for (var i = 0; i < 4; i++) {
+        let possible = "abcdefghijklmnopqrstuvwxyz";
+        for (let i = 0; i < 4; i++) {
             code += possible.charAt(
                 Math.floor(Math.random() * possible.length)
             );
@@ -59,9 +59,9 @@ GameList.prototype.generateCode = function() {
 };
 
 GameList.prototype.removeGame = function(code) {
-    var game = this.findGame(code);
+    let game = this.findGame(code);
 
-    var index = this.games.indexOf(game);
+    let index = this.games.indexOf(game);
     if (index > -1) {
         this.games.splice(index, 1);
         console.log(code + " removed");
