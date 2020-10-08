@@ -1,6 +1,6 @@
 console.log('io loaded');
 
-function setupIo (io) {
+module.exports = function(io) {
     io.on('connection', (socket) => {
         console.log('a user connected');
 
@@ -9,10 +9,8 @@ function setupIo (io) {
         });
 
         socket.on('new user', (username) => {
-            console.log('new user: ', username)
+            console.log('new user:', username)
             io.emit('new user', username);
         });
     });
 };
-
-module.exports = setupIo;

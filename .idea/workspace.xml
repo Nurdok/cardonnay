@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93aa87e6-0e70-4bff-8211-6226132a30ad" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/cardonnay.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/bin_www.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game/game-list.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game/game.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/www" beforeDir="false" afterPath="$PROJECT_DIR$/bin/www" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/io.js" beforeDir="false" afterPath="$PROJECT_DIR$/io.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +44,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -59,7 +56,7 @@
       <option name="presentableId" value="Default" />
       <updated>1602143943334</updated>
       <workItem from="1602143944970" duration="198000" />
-      <workItem from="1602144166501" duration="5127000" />
+      <workItem from="1602144166501" duration="7991000" />
     </task>
     <servers />
   </component>
@@ -67,6 +64,10 @@
     <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="731" y="322" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602152189988">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="731" y="322" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1602152189988" />
     <state x="690" y="267" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1602145819563">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -75,26 +76,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1602146281653" />
-    <state width="1899" height="206" key="GridCell.Tab.0.bottom" timestamp="1602149851682">
+    <state width="1899" height="206" key="GridCell.Tab.0.bottom" timestamp="1602152453968">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="206" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1602149851682" />
-    <state width="1899" height="206" key="GridCell.Tab.0.center" timestamp="1602149851682">
+    <state width="1899" height="206" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1602152453968" />
+    <state width="1899" height="206" key="GridCell.Tab.0.center" timestamp="1602152453968">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="206" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1602149851682" />
-    <state width="1899" height="206" key="GridCell.Tab.0.left" timestamp="1602149851682">
+    <state width="1899" height="206" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1602152453968" />
+    <state width="1899" height="206" key="GridCell.Tab.0.left" timestamp="1602152453968">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="206" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1602149851682" />
-    <state width="1899" height="206" key="GridCell.Tab.0.right" timestamp="1602149851682">
+    <state width="1899" height="206" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1602152453968" />
+    <state width="1899" height="206" key="GridCell.Tab.0.right" timestamp="1602152453968">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="206" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1602149851682" />
-    <state x="461" y="165" key="SettingsEditor" timestamp="1602144141709">
+    <state width="1899" height="206" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1602152453968" />
+    <state x="461" y="165" key="SettingsEditor" timestamp="1602151971109">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1602144141709" />
+    <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1602151971109" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1602146585357">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
