@@ -1,13 +1,17 @@
 $(function () {
     let socket = io();
+    let myUsername = ''
 
     console.log('starting client.js');
 
     $('form').submit(function (e) {
         e.preventDefault(); // prevents page reloading
         console.log('emitting new user msg');
-        socket.emit('new user', $('#username').val());
-        $('#username').val('');
+        let usernameElement = $('#username');
+        myUsername = usernameElement.val();
+        $('#welcome').text('Hi, ' + myUsername + '!');
+        socket.emit('new user', myUsername);
+        $('form').hide();
         return false;
     });
 
