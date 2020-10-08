@@ -21,7 +21,7 @@ Game.prototype.newPlayer = function(name, socket) {
 };
 
 Game.prototype.addPlayer = function(name, socket) {
-    var newPlayer = this.newPlayer(name, socket);
+    let newPlayer = this.newPlayer(name, socket);
     this.initPlayer(newPlayer);
     this.players.push(newPlayer);
     this.sendUpdatedPlayersList();
@@ -52,7 +52,7 @@ Game.prototype.initPlayer = function(newPlayer) {
     }
 
     //when this player disconnects, remove them from this game
-    var self = this;
+    let self = this;
     /*
     newPlayer.socket.on("disconnect", function() {
         newPlayer.isConnected = false;
@@ -83,12 +83,12 @@ Game.prototype.getNextId = function() {
 };
 
 Game.prototype.getJsonGame = function() {
-    var players = [];
+    let players = [];
     this.players.forEach(function(player) {
         players.push(player.getJson());
     });
 
-    var jsonGame = {
+    let jsonGame = {
         code: this.code,
         players,
         inProgress: this.inProgress,
@@ -104,7 +104,7 @@ Game.prototype.sendUpdatedPlayersList = function() {
 };
 
 Game.prototype.sendToAll = function(event, data) {
-    var self = this;
+    let self = this;
     this.players.forEach(function(player) {
         player.socket.emit(event, {
             success: true,
