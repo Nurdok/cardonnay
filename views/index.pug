@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}!
+  <form action="">
+  <input id="username" autocomplete="off" /><button>Send</button>
+  </form>
+  h2 Connected Users
+  ul(id="userList")
