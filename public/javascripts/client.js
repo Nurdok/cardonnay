@@ -15,8 +15,18 @@ $(function () {
         return false;
     });
 
+    /*
     socket.on('new user', function (username) {
         console.log('got a new user message');
         $('#userList').append($('<li>').text(username));
     });
+     */
+
+    socket.on('updatePlayerList', function (data) {
+        console.log('got an updatePlayerList message:' + data);
+        $('#userList').empty();
+        data.data.players.forEach(player =>
+        $('#userList').append($('<li>').text(player.name)));
+    });
+
 });
