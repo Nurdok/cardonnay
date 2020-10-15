@@ -24,9 +24,10 @@ $(function () {
 
     socket.on('updatePlayerList', function (data) {
         console.log('got an updatePlayerList message:' + data);
-        $('#userList').empty();
+        let userList = $('#userList');
+        userList.empty();
         data.data.players.forEach(player =>
-        $('#userList').append($('<li>').text(player.name)));
+        userList.append($('<li>').text(player.name)));
     });
 
 });
