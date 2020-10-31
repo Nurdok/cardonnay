@@ -8,6 +8,7 @@ module.exports = function(io) {
         console.log('a user connected');
 
         socket.on('disconnect', () => {
+            game.removePlayer(socket);
             console.log('a user disconnected');
         });
 

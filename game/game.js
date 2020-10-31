@@ -62,6 +62,23 @@ Game.prototype.addPlayer = function(name, socket) {
     return newPlayer;
 };
 
+Game.prototype.getPlayerIndexBySocket = function(socket) {
+    for (let i = 0; i < this.players.length; ++i) {
+        if (this.players[i].socket === socket) {
+            return i;
+        }
+    }
+    return null;
+};
+
+Game.prototype.removePlayer = function(socket) {
+    let playerIndex = this.getPlayerIndexBySocket(socket);
+    if (playerIndex !== null) {
+        this.players.splice(playerIndex, 1);
+        this.sendUpdatedPlayersList();
+    }
+};
+
 Game.prototype.deleteGameIfEmpty = function() {
     // Handle dev game
     if (this.code === "ffff") return;
