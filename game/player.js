@@ -4,6 +4,7 @@ function Player(name, socket, id) {
     this.id = id;
     this.isHost = false;
     this.isConnected = true;
+    this.team = -1;
 }
 
 Player.prototype.getJson = function() {
@@ -12,6 +13,7 @@ Player.prototype.getJson = function() {
         id: this.id,
         isHost: this.isHost,
         isConnected: this.isConnected,
+        team: this.team,
     };
 };
 
