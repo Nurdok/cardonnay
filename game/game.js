@@ -34,6 +34,17 @@ const CARDS = [
     {text: 'Ayn Rand', points: 3},
 ];
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        let temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
+
+
 function Game(code, onEmpty) {
     this.code = code;
     this.onEmpty = onEmpty;
@@ -193,15 +204,28 @@ Game.prototype.sendToAll = function(event, data) {
     });
 };
 
+Game.prototype.allocatePlayersToTeams = function() {
+    let teamAllocation = []
+    for (let i = 0; i < this.players.length; i++) {
+        if (i < this.players.length / 2) {
+            teamAllocation.push(0);
+        } else {
+            teamAllocation.push(1);
+        }
+    }
+    shuffleArray(teamAllocation);
+    for (let i = 0; i < this.players.length; i++) {
+        this.players[i].team = teamAllocation[i]
+        this.teams[teamAllocation[i]].addPlayer(this.players[i])
+    }
+}
+
 Game.prototype.startGame = function() {
     this.inProgress = true;
     this.currentRoundNum = 1;
     this.deck = CARDS;
     this.teams = [new Team(0), new Team(1)];
-    for (let i = 0; i < this.players.length; i++) {
-        this.players[i].team = i % 2
-        this.teams[i%2].addPlayer(this.players[i])
-    }
+    this.allocatePlayersToTeams();
     this.sendToAll('startRound', {round: 1});
 }
 
