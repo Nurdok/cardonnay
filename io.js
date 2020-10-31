@@ -16,5 +16,9 @@ module.exports = function(io) {
             game.addPlayer(username, socket);
             io.emit('new user', username);
         });
+
+        socket.on('hostStartGame', () => {
+            game.startGame();
+        });
     });
 };

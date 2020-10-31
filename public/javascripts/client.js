@@ -4,6 +4,9 @@ $(function () {
 
     console.log('starting client.js');
 
+    let startGameButton = $('#startGameButton');
+    startGameButton.hide();
+
     $('form').submit(function (e) {
         e.preventDefault(); // prevents page reloading
         console.log('emitting new user msg');
@@ -28,6 +31,20 @@ $(function () {
         userList.empty();
         data.data.players.forEach(player =>
         userList.append($('<li>').text(player.name)));
+
+        if (data.player.isHost) {
+            startGameButton.show();
+        } else {
+            startGameButton.hide();
+        }
+    });
+
+    startGameButton.click(function() {
+       socket.emit('hostStartGame');
+    });
+
+    socket.on('startRound', function(data) {
+        $('#welcome').text('Hi, ' + myUsername + '! It\'s round ' + data.data.round);
     });
 
 });
