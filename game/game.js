@@ -1,9 +1,22 @@
+const csv = require('fast-csv');
+const fs = require('fs')
+
 let Player = require('./player');
 let Team = require('./team');
 let Deck = require('./deck');
 const utils = require('./utils');
 const assert = require('assert').strict;
 
+
+async function loadCardsFromFile(path) {
+    let cards = []
+    let stream = fs.createReadStream(path);
+    await csv.parseStream(stream, {headers:true})
+        .on("data", function(data) {
+            cards.push(data)
+        });
+    return cards;
+}
 const CARDS = [
     {text: 'Sean Connery', points: 1},
     {text: 'Sliders', points: 2},
@@ -237,7 +250,8 @@ Game.prototype.allocatePlayersToTeams = function() {
 Game.prototype.startGame = function() {
     this.inProgress = true;
     this.currentRoundNum = 1;
-    this.deck = new Deck(CARDS);
+    this.deck = await loadCardsFromFile('cards.csv');
+    console.log(this.deck)
     this.allocatePlayersToTeams();
     this.startRound();
 }

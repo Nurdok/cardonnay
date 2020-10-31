@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "bufferutil": "^4.0.1",
+    "fast-csv": "^4.3.3",
     "utf-8-validate": "^5.0.2"
   }
 }
