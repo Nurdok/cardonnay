@@ -42,7 +42,7 @@ function Game(code, onEmpty) {
     this.deck = [];
     //this.currentRound;
 
-    //this.currentId = 1;
+    this.currentPlayerId = 1;
     //this.botCount = 0;
     this.currentRoundNum = 1;
     this.timeOfLastAction = new Date();
@@ -62,20 +62,24 @@ Game.prototype.addPlayer = function(name, socket) {
     return newPlayer;
 };
 
-Game.prototype.getPlayerIndexBySocket = function(socket) {
+Game.prototype.getPlayerIndexById = function(id) {
     for (let i = 0; i < this.players.length; ++i) {
-        if (this.players[i].socket === socket) {
+        if (this.players[i].id === id) {
             return i;
         }
     }
+    console.log('Player with id ' + id + ' not found')
     return null;
 };
 
-Game.prototype.removePlayer = function(socket) {
-    let playerIndex = this.getPlayerIndexBySocket(socket);
+Game.prototype.removePlayer = function(id) {
+    let playerIndex = this.getPlayerIndexById(id);
     if (playerIndex !== null) {
         this.players.splice(playerIndex, 1);
-        this.sendUpdatedPlayersList();
+    }
+
+    if (this.players.length === 0) {
+        this.onEmpty();
     }
 };
 
@@ -104,18 +108,18 @@ Game.prototype.initPlayer = function(newPlayer) {
 
     //when this player disconnects, remove them from this game
     let self = this;
-    /*
+    console.log('registering disconnect msg')
     newPlayer.socket.on("disconnect", function() {
         newPlayer.isConnected = false;
+        /*
         if (self.inProgress) {
             self.currentRound.findReplacementFor(newPlayer);
         } else {
-            self.removePlayer(newPlayer.id);
-        }
+        */
+        self.removePlayer(newPlayer.id);
         self.onPlayerDisconnect(newPlayer);
         self.sendUpdatedPlayersList();
     });
-    */
 
     /*
     newPlayer.socket.on("viewPreviousResults", function() {
@@ -129,8 +133,29 @@ Game.prototype.initPlayer = function(newPlayer) {
      */
 };
 
+Game.prototype.onPlayerDisconnect = function(oldPlayer) {
+    const noHost = !this.host;
+    const playerWasHost = this.host && oldPlayer.id === this.host.id;
+
+    if (playerWasHost || noHost) {
+        this.host = undefined;
+        //find the first connected player to be host
+        for (var i = 0; i < this.players.length; i++) {
+            var thisPlayer = this.players[i];
+            if (thisPlayer.isConnected) {
+                this.host = thisPlayer;
+                thisPlayer.makeHost();
+                break;
+            }
+        }
+    }
+
+    this.deleteGameIfEmpty();
+};
+
+
 Game.prototype.getNextId = function() {
-    return this.currentId++;
+    return this.currentPlayerId++;
 };
 
 Game.prototype.getJsonGame = function() {
