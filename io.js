@@ -7,11 +7,6 @@ module.exports = function(io) {
     io.on('connection', (socket) => {
         console.log('a user connected');
 
-        socket.on('disconnect', () => {
-            game.removePlayer(socket);
-            console.log('a user disconnected');
-        });
-
         socket.on('new user', (username) => {
             console.log('new user:', username)
             game.addPlayer(username, socket);
