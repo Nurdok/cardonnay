@@ -44,7 +44,8 @@ $(function () {
     });
 
     socket.on('startRound', function(data) {
-        $('#welcome').text('Hi, ' + myUsername + '! It\'s round ' + data.data.round);
+        $('#welcome').text('Hi, ' + myUsername + '! It\'s round ' +
+            data.data.round + ' and you\'re on team ' + data.player.team);
     });
 
 });
