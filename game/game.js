@@ -1,4 +1,5 @@
 let Player = require('./player');
+let Team = require('./team');
 
 const CARDS = [
     {text: 'Sean Connery', points: 1},
@@ -196,8 +197,10 @@ Game.prototype.startGame = function() {
     this.inProgress = true;
     this.currentRoundNum = 1;
     this.deck = CARDS;
+    this.teams = [new Team(0), new Team(1)];
     for (let i = 0; i < this.players.length; i++) {
         this.players[i].team = i % 2
+        this.teams[i%2].addPlayer(this.players[i])
     }
     this.sendToAll('startRound', {round: 1});
 }
