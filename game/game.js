@@ -43,8 +43,6 @@ function shuffleArray(array) {
     }
 }
 
-
-
 function Game(code, onEmpty) {
     this.code = code;
     this.onEmpty = onEmpty;
