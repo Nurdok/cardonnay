@@ -26,14 +26,14 @@ $(function () {
     let currentTimerEnd = null;
     let updateTimer = null;
 
-    $('form').submit(function (e) {
+    $('#usernameForm').submit(function (e) {
         e.preventDefault(); // prevents page reloading
         console.log('emitting new user msg');
         let usernameElement = $('#username');
         myUsername = usernameElement.val();
         $('#welcome').text('Hi, ' + myUsername + '!');
         socket.emit('new user', myUsername);
-        $('form').hide();
+        $('#usernameForm').hide();
         return false;
     });
 
@@ -77,12 +77,6 @@ $(function () {
         let text = 'Hi, ' + myUsername + '!\n';
         if (data.data.currentPlayerId == data.player.id) {
             text += "You're the current player!";
-            cardText.show();
-            cardText.text(currentCard.text);
-            cardPoints.show();
-            cardPoints.text('(' + currentCard.points + ')');
-            skipButton.show();
-            correctButton.show();
         } else if (data.data.currentTeamId == myTeamId) {
             text += "You're team is up, guess away!";
         } else {
@@ -117,6 +111,26 @@ $(function () {
                 clearInterval(updateTimer);
             }
         }, 25);
+    });
+
+    socket.on('newCard', function(data) {
+        cardText.show();
+        cardPoints.show();
+        skipButton.show();
+        correctButton.show();
+
+        let card = data.data.currentCard;
+        cardText.text(card.text);
+        cardPoints.text('(' + card.points + ')');
+    });
+
+
+    skipButton.click(function() {
+        socket.emit('clickedSkip');
+    });
+
+    correctButton.click(function() {
+        socket.emit('clickedCorrect');
     });
 
     socket.on('endTurn', function(data) {

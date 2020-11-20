@@ -245,8 +245,9 @@ Game.prototype.startTurn = function() {
 
     this.sendToAll('startTurn',
         {currentTeamId: this.currentTeam.id,
-            currentPlayerId: this.currentPlayer.id,
-            currentCard: this.currentCard});
+            currentPlayerId: this.currentPlayer.id});
+
+    this.currentPlayer.send('newCard', {currentCard: this.currentCard});
 
     this.turnTimer = new Date().getTime() + 1000 * 60;
     let self = this;
