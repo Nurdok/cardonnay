@@ -20,4 +20,9 @@ function genTeamAllocation(length) {
     return teamAllocation;
 }
 
+module.exports = {
+    shuffleArray,
+    genTeamAllocation,
+}
+
 
