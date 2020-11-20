@@ -1,5 +1,6 @@
 let Player = require('./player');
 let Team = require('./team');
+let Deck = require('./deck');
 let utils = require('./utils');
 
 const CARDS = [
@@ -42,6 +43,7 @@ function Game(code, onEmpty) {
     this.host;
     this.inProgress = false;
     this.deck = [];
+    this.roundEndTime = null;
     //this.currentRound;
 
     this.currentPlayerId = 1;
@@ -213,11 +215,43 @@ Game.prototype.allocatePlayersToTeams = function() {
 Game.prototype.startGame = function() {
     this.inProgress = true;
     this.currentRoundNum = 1;
-    this.deck = CARDS;
+    this.deck = new Deck(CARDS);
     this.teams = [new Team(0), new Team(1)];
     this.allocatePlayersToTeams();
-    this.sendToAll('startRound', {round: 1});
+    this.startRound();
 }
 
+Game.prototype.startRound = function() {
+    this.sendToAll('startRound', {round: 1});
+    this.setStartingTeamInRound();
+    this.startTurn();
+}
+
+Game.prototype.setStartingTeamInRound = function() {
+    let min_score = 0;
+    let min_team = this.teams[0];
+    for (let team in this.teams) {
+        if (team.score < min_score) {
+            min_score = team.score;
+            min_team = team;
+        }
+    }
+    this.current_team = min_team;
+}
+
+Game.prototype.startTurn = function() {
+    this.turnTimer = new Date().getTime() + 1000 * 60;
+    let self = this;
+    let timer = setInterval(function() {
+        let now = new Date().getTime();
+        let timeLeft = self.turnTimer - now;
+        if (timeLeft < 0) {
+            self.sendToAll('endTurn')
+            clearInterval(timer);
+        } else {
+            self.sendToAll('updateTurnTimer', {timeLeft: timeLeft})
+        }
+    }, 250);
+}
 
 module.exports = Game;

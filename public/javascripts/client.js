@@ -7,6 +7,9 @@ $(function () {
     let startGameButton = $('#startGameButton');
     startGameButton.hide();
 
+    let clock = $('#clock');
+    clock.hide();
+
     $('form').submit(function (e) {
         e.preventDefault(); // prevents page reloading
         console.log('emitting new user msg');
@@ -44,8 +47,21 @@ $(function () {
     });
 
     socket.on('startRound', function(data) {
+        startGameButton.hide();
         $('#welcome').text('Hi, ' + myUsername + '! It\'s round ' +
             data.data.round + ' and you\'re on team ' + data.player.team);
     });
 
+    socket.on('updateTurnTimer', function(data) {
+        console.log('got an updateTurnTimer message:' + data);
+        let msec = data.data.timeLeft;
+        let seconds = (msec / 1000);
+        clock.show();
+        clock.text(seconds + ' seconds remaining...');
+    });
+
+    socket.on('endTurn', function(data) {
+        console.log('got an endTurn message:' + data);
+        clock.hide();
+    });
 });
