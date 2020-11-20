@@ -8,20 +8,31 @@ $(function () {
     let startGameButton = $('#startGameButton');
     startGameButton.hide();
 
+    let skipButton = $('#skipButton');
+    skipButton.hide();
+
+    let correctButton = $('#correctButton');
+    correctButton.hide();
+
     let clock = $('#clock');
     clock.hide();
+
+    let cardDiv = $('#cardDiv');
+    cardDiv.hide();
+    let cardText = $('#cardText');
+    let cardPoints = $('#cardPoints');
 
     let currentTimerEnd = null;
     let updateTimer = null;
 
-    $('form').submit(function (e) {
+    $('#usernameForm').submit(function (e) {
         e.preventDefault(); // prevents page reloading
         console.log('emitting new user msg');
         let usernameElement = $('#username');
         myUsername = usernameElement.val();
         $('#welcome').text('Hi, ' + myUsername + '!');
         socket.emit('new user', myUsername);
-        $('form').hide();
+        $('#usernameForm').hide();
         return false;
     });
 
@@ -60,6 +71,7 @@ $(function () {
     socket.on('startTurn', function(data) {
         let team = data.data.team;
         let player = data.data.player;
+        let currentCard = data.data.currentCard;
 
         let text = 'Hi, ' + myUsername + '!\n';
         if (data.data.currentPlayerId == data.player.id) {
@@ -79,7 +91,6 @@ $(function () {
     }
 
     socket.on('updateTurnTimer', function(data) {
-        console.log('got an updateTurnTimer message:' + data.data.timeLeft);
         clock.show();
         currentTimerEnd = new Date().getTime() + data.data.timeLeft;
         if (updateTimer != null) {
@@ -100,8 +111,30 @@ $(function () {
         }, 25);
     });
 
+    socket.on('newCard', function(data) {
+        cardDiv.show();
+        skipButton.show();
+        correctButton.show();
+
+        let card = data.data.currentCard;
+        cardText.text(card.text);
+        cardPoints.text('(' + card.points + ')');
+    });
+
+
+    skipButton.click(function() {
+        socket.emit('cardEvent', 'skip');
+    });
+
+    correctButton.click(function() {
+        socket.emit('cardEvent', 'correct');
+    });
+
     socket.on('endTurn', function(data) {
         console.log('got an endTurn message:' + data);
         clock.hide();
+        skipButton.hide();
+        correctButton.hide();
+        cardDiv.hide();
     });
 });

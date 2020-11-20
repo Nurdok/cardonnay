@@ -3,10 +3,15 @@ extends layout
 block content
   h1= title
   p(id="welcome") Welcome to #{title}!
-  <form action="">
+  <form id="usernameForm" action="">
   <input id="username" autocomplete="off" /><button>Send</button>
   </form>
   p(id="clock")
   h2 Connected Users
   ul(id="userList")
-  button(type="button", id="startGameButton") Start Game!
+  button(type="button", id="startGameButton") Start Game
+  div(id="cardDiv", class="card")
+    p(id="cardText")
+    p(id="cardPoints")
+  button(type="button", id="skipButton") Skip
+  button(type="button", id="correctButton") Correct
