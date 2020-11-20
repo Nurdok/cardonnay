@@ -17,11 +17,10 @@ $(function () {
     let clock = $('#clock');
     clock.hide();
 
+    let cardDiv = $('#cardDiv');
+    cardDiv.hide();
     let cardText = $('#cardText');
-    cardText.hide();
-
     let cardPoints = $('#cardPoints');
-    cardPoints.hide();
 
     let currentTimerEnd = null;
     let updateTimer = null;
@@ -92,7 +91,6 @@ $(function () {
     }
 
     socket.on('updateTurnTimer', function(data) {
-        console.log('got an updateTurnTimer message:' + data.data.timeLeft);
         clock.show();
         currentTimerEnd = new Date().getTime() + data.data.timeLeft;
         if (updateTimer != null) {
@@ -114,8 +112,7 @@ $(function () {
     });
 
     socket.on('newCard', function(data) {
-        cardText.show();
-        cardPoints.show();
+        cardDiv.show();
         skipButton.show();
         correctButton.show();
 
@@ -138,5 +135,6 @@ $(function () {
         clock.hide();
         skipButton.hide();
         correctButton.hide();
+        cardDiv.hide();
     });
 });
