@@ -1,6 +1,7 @@
 $(function () {
     let socket = io();
     let myUsername = ''
+    let myTeamId = null;
 
     console.log('starting client.js');
 
@@ -53,6 +54,23 @@ $(function () {
         startGameButton.hide();
         $('#welcome').text('Hi, ' + myUsername + '! It\'s round ' +
             data.data.round + ' and you\'re on team ' + data.player.team);
+        myTeamId = data.player.team;
+    });
+
+    socket.on('startTurn', function(data) {
+        let team = data.data.team;
+        let player = data.data.player;
+
+        let text = 'Hi, ' + myUsername + '!\n';
+        if (data.data.currentPlayerId == data.player.id) {
+            text += "You're the current player!";
+        } else if (data.data.currentTeamId == myTeamId) {
+            text += "You're team is up, guess away!";
+        } else {
+            text += "The other team is playing, don't interrupt";
+        }
+
+        $('#welcome').text(text);
     });
 
     function checkTime(i) {

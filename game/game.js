@@ -236,10 +236,15 @@ Game.prototype.setStartingTeamInRound = function() {
             min_team = team;
         }
     }
-    this.current_team = min_team;
+    this.currentTeam = min_team;
 }
 
 Game.prototype.startTurn = function() {
+    this.currentPlayer = this.currentTeam.nextPlayer();
+
+    this.sendToAll('startTurn',
+        {currentTeamId: this.currentTeam.id, currentPlayerId: this.currentPlayer.id});
+
     this.turnTimer = new Date().getTime() + 1000 * 60;
     let self = this;
     let timer = setInterval(function() {
