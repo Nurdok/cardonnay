@@ -126,11 +126,11 @@ $(function () {
 
 
     skipButton.click(function() {
-        socket.emit('clickedSkip');
+        socket.emit('cardEvent', 'skip');
     });
 
     correctButton.click(function() {
-        socket.emit('clickedCorrect');
+        socket.emit('cardEvent', 'correct');
     });
 
     socket.on('endTurn', function(data) {

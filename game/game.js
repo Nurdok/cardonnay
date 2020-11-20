@@ -241,13 +241,11 @@ Game.prototype.setStartingTeamInRound = function() {
 
 Game.prototype.startTurn = function() {
     this.currentPlayer = this.currentTeam.nextPlayer();
-    this.currentCard = this.deck.draw();
 
     this.sendToAll('startTurn',
         {currentTeamId: this.currentTeam.id,
             currentPlayerId: this.currentPlayer.id});
-
-    this.currentPlayer.send('newCard', {currentCard: this.currentCard});
+    this.drawNewCard();
 
     this.turnTimer = new Date().getTime() + 1000 * 60;
     let self = this;
@@ -261,6 +259,33 @@ Game.prototype.startTurn = function() {
             self.sendToAll('updateTurnTimer', {timeLeft: timeLeft})
         }
     }, 250);
+}
+
+Game.prototype.drawNewCard = function() {
+    this.currentCard = this.deck.draw();
+    let self = this;
+
+    this.currentPlayer.sendThen(
+        'newCard',
+        {currentCard: this.currentCard},
+        'cardEvent',
+        function(event) {
+            if (event === 'skip') {
+                self.deck.discard(this.currentCard);
+            } else if (event === 'correct') {
+                self.currentTeam.cards.push(this.currentCard);
+            }
+            if (self.deck.isEmpty()) {
+                self.sendToAll('endTurn');
+                self.deck.reset();
+                if (self.deck.isEmpty()) {
+                    self.sendToAll('endRound');
+                }
+            } else {
+                self.drawNewCard();
+            }
+        }
+    );
 }
 
 module.exports = Game;

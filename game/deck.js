@@ -10,7 +10,8 @@ Deck.prototype.shuffleRemaining = function() {
 }
 
 Deck.prototype.reset = function() {
-    this.drawPile.push(...this.discard);
+    this.drawPile.push(...this.discardPile);
+    this.discardPile = [];
     this.shuffleRemaining();
 }
 
@@ -20,6 +21,10 @@ Deck.prototype.draw = function() {
 
 Deck.prototype.discard = function(card) {
     return this.discardPile.push(card);
+}
+
+Deck.prototype.isEmpty = function() {
+    return this.drawPile.length === 0;
 }
 
 module.exports = Deck;
