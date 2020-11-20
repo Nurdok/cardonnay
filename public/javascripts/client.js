@@ -10,6 +10,9 @@ $(function () {
     let clock = $('#clock');
     clock.hide();
 
+    let currentTimerEnd = null;
+    let updateTimer = null;
+
     $('form').submit(function (e) {
         e.preventDefault(); // prevents page reloading
         console.log('emitting new user msg');
@@ -52,12 +55,31 @@ $(function () {
             data.data.round + ' and you\'re on team ' + data.player.team);
     });
 
+    function checkTime(i) {
+        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+    }
+
     socket.on('updateTurnTimer', function(data) {
-        console.log('got an updateTurnTimer message:' + data);
-        let msec = data.data.timeLeft;
-        let seconds = (msec / 1000);
+        console.log('got an updateTurnTimer message:' + data.data.timeLeft);
         clock.show();
-        clock.text(seconds + ' seconds remaining...');
+        currentTimerEnd = new Date().getTime() + data.data.timeLeft;
+        if (updateTimer != null) {
+            clearInterval(updateTimer);
+        }
+        updateTimer = setInterval(function() {
+            let now = new Date().getTime();
+            let timeLeftMsec = currentTimerEnd - now;
+            let seconds = Math.floor(timeLeftMsec / 1000) % 60;
+            let minutes = Math.floor(timeLeftMsec / 1000 / 60);
+            let s = checkTime(seconds);
+            let m = checkTime(minutes);
+            let clockText = m + ":" + s;
+            clock.text("Time remaining: " + clockText);
+            if (timeLeftMsec > 0) {
+                clearInterval(updateTimer);
+            }
+        }, 25);
     });
 
     socket.on('endTurn', function(data) {
