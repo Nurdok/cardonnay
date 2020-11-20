@@ -20,9 +20,18 @@ function genTeamAllocation(length) {
     return teamAllocation;
 }
 
+function sumPoints(cards) {
+    let sum = 0;
+    cards.forEach(function(card) {
+        sum += card.points;
+    });
+    return sum;
+}
+
 module.exports = {
     shuffleArray,
     genTeamAllocation,
+    sumPoints,
 }
 
 

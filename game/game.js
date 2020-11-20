@@ -50,6 +50,7 @@ function Game(code, onEmpty) {
     //this.botCount = 0;
     this.currentRoundNum = 1;
     this.timeOfLastAction = new Date();
+    this.currentCorrectCards = [];
 
     setTimeout(() => this.deleteGameIfEmpty(), 60 * 1000);
 }
@@ -245,6 +246,8 @@ Game.prototype.startTurn = function() {
     this.sendToAll('startTurn',
         {currentTeamId: this.currentTeam.id,
             currentPlayerId: this.currentPlayer.id});
+    this.sendToAll('updateCurrentTurnScore',
+        {score: utils.sumPoints(this.currentCorrectCards)})
     this.drawNewCard();
 
     this.turnTimer = new Date().getTime() + 1000 * 60;
@@ -261,6 +264,16 @@ Game.prototype.startTurn = function() {
     }, 250);
 }
 
+Game.prototype.endTurn = function() {
+    this.sendToAll('endTurn');
+    this.currentTeam.cards.push(...this.currentCorrectCards);
+    this.currentCorrectCards = [];
+    this.deck.reset();
+    if (this.deck.isEmpty()) {
+        this.sendToAll('endRound');
+    }
+}
+
 Game.prototype.drawNewCard = function() {
     this.currentCard = this.deck.draw();
     let self = this;
@@ -271,16 +284,14 @@ Game.prototype.drawNewCard = function() {
         'cardEvent',
         function(event) {
             if (event === 'skip') {
-                self.deck.discard(this.currentCard);
+                self.deck.discard(self.currentCard);
             } else if (event === 'correct') {
-                self.currentTeam.cards.push(this.currentCard);
+                self.currentCorrectCards.push(self.currentCard);
+                self.sendToAll('updateCurrentTurnScore',
+                    {score: utils.sumPoints(self.currentCorrectCards)})
             }
             if (self.deck.isEmpty()) {
-                self.sendToAll('endTurn');
-                self.deck.reset();
-                if (self.deck.isEmpty()) {
-                    self.sendToAll('endRound');
-                }
+                self.endTurn();
             } else {
                 self.drawNewCard();
             }
