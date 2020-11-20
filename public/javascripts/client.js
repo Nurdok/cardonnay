@@ -22,6 +22,9 @@ $(function () {
     let cardText = $('#cardText');
     let cardPoints = $('#cardPoints');
 
+    let currentTurnScore = $('#currentTurnScore');
+    currentTurnScore.hide();
+
     let currentTimerEnd = null;
     let updateTimer = null;
 
@@ -136,5 +139,11 @@ $(function () {
         skipButton.hide();
         correctButton.hide();
         cardDiv.hide();
+        currentTurnScore.hide();
+    });
+
+    socket.on('updateCurrentTurnScore', function(data) {
+        currentTurnScore.text('Scored so far: ' + data.data.score + ' points.')
+        currentTurnScore.show();
     });
 });
