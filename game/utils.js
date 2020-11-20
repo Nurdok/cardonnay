@@ -21,7 +21,6 @@ function genTeamAllocation(length) {
 }
 
 function sumPoints(cards) {
-    console.log('in sumPoints: ' + cards);
     let sum = 0;
     cards.forEach(function(card) {
         sum += card.points;

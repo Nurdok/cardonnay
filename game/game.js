@@ -276,8 +276,6 @@ Game.prototype.endTurn = function() {
 
 Game.prototype.drawNewCard = function() {
     this.currentCard = this.deck.draw();
-    console.log('1: ' + this.currentCard);
-    console.log('a: ' + this.currentCorrectCards);
     let self = this;
 
     this.currentPlayer.sendThen(
@@ -289,8 +287,6 @@ Game.prototype.drawNewCard = function() {
                 self.deck.discard(self.currentCard);
             } else if (event === 'correct') {
                 self.currentCorrectCards.push(self.currentCard);
-                console.log('2: ' + self.currentCard);
-                console.log('b: ' + self.currentCorrectCards);
                 self.sendToAll('updateCurrentTurnScore',
                     {score: utils.sumPoints(self.currentCorrectCards)})
             }
