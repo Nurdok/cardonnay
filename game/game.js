@@ -241,9 +241,12 @@ Game.prototype.setStartingTeamInRound = function() {
 
 Game.prototype.startTurn = function() {
     this.currentPlayer = this.currentTeam.nextPlayer();
+    this.currentCard = this.deck.draw();
 
     this.sendToAll('startTurn',
-        {currentTeamId: this.currentTeam.id, currentPlayerId: this.currentPlayer.id});
+        {currentTeamId: this.currentTeam.id,
+            currentPlayerId: this.currentPlayer.id,
+            currentCard: this.currentCard});
 
     this.turnTimer = new Date().getTime() + 1000 * 60;
     let self = this;

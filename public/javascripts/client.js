@@ -8,8 +8,20 @@ $(function () {
     let startGameButton = $('#startGameButton');
     startGameButton.hide();
 
+    let skipButton = $('#skipButton');
+    skipButton.hide();
+
+    let correctButton = $('#correctButton');
+    correctButton.hide();
+
     let clock = $('#clock');
     clock.hide();
+
+    let cardText = $('#cardText');
+    cardText.hide();
+
+    let cardPoints = $('#cardPoints');
+    cardPoints.hide();
 
     let currentTimerEnd = null;
     let updateTimer = null;
@@ -60,10 +72,17 @@ $(function () {
     socket.on('startTurn', function(data) {
         let team = data.data.team;
         let player = data.data.player;
+        let currentCard = data.data.currentCard;
 
         let text = 'Hi, ' + myUsername + '!\n';
         if (data.data.currentPlayerId == data.player.id) {
             text += "You're the current player!";
+            cardText.show();
+            cardText.text(currentCard.text);
+            cardPoints.show();
+            cardPoints.text('(' + currentCard.points + ')');
+            skipButton.show();
+            correctButton.show();
         } else if (data.data.currentTeamId == myTeamId) {
             text += "You're team is up, guess away!";
         } else {
@@ -103,5 +122,7 @@ $(function () {
     socket.on('endTurn', function(data) {
         console.log('got an endTurn message:' + data);
         clock.hide();
+        skipButton.hide();
+        correctButton.hide();
     });
 });
