@@ -1,5 +1,6 @@
 let Player = require('./player');
 let Team = require('./team');
+let utils = require('./utils');
 
 const CARDS = [
     {text: 'Sean Connery', points: 1},
@@ -33,15 +34,6 @@ const CARDS = [
     {text: 'Libertarianism', points: 2},
     {text: 'Ayn Rand', points: 3},
 ];
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        let temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
 
 function Game(code, onEmpty) {
     this.code = code;
@@ -211,7 +203,7 @@ Game.prototype.allocatePlayersToTeams = function() {
             teamAllocation.push(1);
         }
     }
-    shuffleArray(teamAllocation);
+    utils.shuffleArray(teamAllocation);
     for (let i = 0; i < this.players.length; i++) {
         this.players[i].team = teamAllocation[i]
         this.teams[teamAllocation[i]].addPlayer(this.players[i])
