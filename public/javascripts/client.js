@@ -25,6 +25,8 @@ $(function () {
     let currentTurnScore = $('#currentTurnScore');
     currentTurnScore.hide();
 
+    let currentRoundNum = $('#currentRoundNum');
+
     let currentTimerEnd = null;
     let updateTimer = null;
 
@@ -66,9 +68,10 @@ $(function () {
 
     socket.on('startRound', function(data) {
         startGameButton.hide();
-        $('#welcome').text('Hi, ' + myUsername + '! It\'s round ' +
-            data.data.round + ' and you\'re on team ' + data.player.team);
+        $('#welcome').text('Hi, ' + myUsername +
+            '! You\'re on team ' + data.player.team);
         myTeamId = data.player.team;
+        currentRoundNum.text(data.data.round)
     });
 
     socket.on('startTurn', function(data) {
@@ -80,9 +83,9 @@ $(function () {
         if (data.data.currentPlayerId == data.player.id) {
             text += "You're the current player!";
         } else if (data.data.currentTeamId == myTeamId) {
-            text += "You're team is up, guess away!";
+            text += "Your team member (" + data.data.currentPlayerName + ") is up, guess away!";
         } else {
-            text += "The other team is playing, don't interrupt";
+            text += "The other team is playing (" + data.data.currentPlayerName + " is up), don't interrupt";
         }
 
         $('#welcome').text(text);
@@ -135,11 +138,22 @@ $(function () {
 
     socket.on('endTurn', function(data) {
         console.log('got an endTurn message:' + data);
+        if (updateTimer != null) {
+            clearInterval(updateTimer);
+        }
         clock.hide();
         skipButton.hide();
         correctButton.hide();
         cardDiv.hide();
         currentTurnScore.hide();
+    });
+
+    socket.on('endRound', function(data) {
+
+    });
+
+    socket.on('endGame', function(data) {
+        $('#welcome').text('GAME OVER');
     });
 
     socket.on('updateCurrentTurnScore', function(data) {
