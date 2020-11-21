@@ -1,7 +1,8 @@
 let Player = require('./player');
 let Team = require('./team');
 let Deck = require('./deck');
-let utils = require('./utils');
+const utils = require('./utils');
+const assert = require('assert').strict;
 
 const CARDS = [
     {text: 'Sean Connery', points: 1},
@@ -40,17 +41,20 @@ function Game(code, onEmpty) {
     this.code = code;
     this.onEmpty = onEmpty;
     this.players = [];
-    this.host;
+    this.teams = [];
+    this.host = null;
     this.inProgress = false;
     this.deck = [];
     this.roundEndTime = null;
-    //this.currentRound;
 
     this.currentPlayerId = 1;
-    //this.botCount = 0;
     this.currentRoundNum = 1;
     this.timeOfLastAction = new Date();
     this.currentCorrectCards = [];
+    this.turnTimer = null;
+    this.timerHandler = null;
+    this.currentTeam = null;
+    this.currentTeamIndex = null;
 
     setTimeout(() => this.deleteGameIfEmpty(), 60 * 1000);
 }
@@ -169,9 +173,15 @@ Game.prototype.getJsonGame = function() {
         players.push(player.getJson());
     });
 
+    let teams = [];
+    this.teams.forEach(function(team) {
+        teams.push(team.getJson());
+    });
+
     let jsonGame = {
         code: this.code,
         players,
+        teams,
         inProgress: this.inProgress,
     };
     return jsonGame;
@@ -197,19 +207,29 @@ Game.prototype.sendToAll = function(event, data) {
     });
 };
 
-Game.prototype.allocatePlayersToTeams = function() {
-    let teamAllocation = []
-    for (let i = 0; i < this.players.length; i++) {
-        if (i < this.players.length / 2) {
-            teamAllocation.push(0);
-        } else {
-            teamAllocation.push(1);
+Game.prototype.getTeamById = function(id) {
+    let retTeam = null;
+    this.teams.forEach(function(team) {
+        if (team.id == id) {
+            retTeam = team;
         }
-    }
-    utils.shuffleArray(teamAllocation);
+    });
+    return retTeam;
+}
+
+Game.prototype.allocatePlayersToTeams = function() {
+    let teamAllocation = utils.genTeamAllocation(this.players.length);
+    console.log('teamAllocation: ' + teamAllocation);
     for (let i = 0; i < this.players.length; i++) {
-        this.players[i].team = teamAllocation[i]
-        this.teams[teamAllocation[i]].addPlayer(this.players[i])
+        let id = teamAllocation[i];
+        let team = this.getTeamById(id);
+        if (team == null) {
+            console.log('Creating Team(' + id + ')');
+            team = new Team(id);
+            this.teams.push(team);
+        }
+        this.players[i].team = id;
+        team.addPlayer(this.players[i])
     }
 }
 
@@ -217,27 +237,34 @@ Game.prototype.startGame = function() {
     this.inProgress = true;
     this.currentRoundNum = 1;
     this.deck = new Deck(CARDS);
-    this.teams = [new Team(0), new Team(1)];
     this.allocatePlayersToTeams();
     this.startRound();
 }
 
 Game.prototype.startRound = function() {
-    this.sendToAll('startRound', {round: 1});
+    this.sendToAll('startRound', {round: this.currentRoundNum});
     this.setStartingTeamInRound();
     this.startTurn();
 }
 
 Game.prototype.setStartingTeamInRound = function() {
-    let min_score = 0;
-    let min_team = this.teams[0];
-    for (let team in this.teams) {
-        if (team.score < min_score) {
-            min_score = team.score;
-            min_team = team;
+    let minScore = 0;
+    let minTeamIndex = 0;
+    for (let i = 0; i < this.teams.length; i++) {
+        const team = this.teams[i];
+        if (team.score < minScore) {
+            minScore = team.score;
+            minTeamIndex = i;
         }
     }
-    this.currentTeam = min_team;
+    this.currentTeamIndex = minTeamIndex;
+    this.currentTeam = this.teams[this.currentTeamIndex];
+}
+
+Game.prototype.setNextTeam = function() {
+    assert.ok(this.teams.length > 0, 'team list is empty');
+    this.currentTeamIndex = (this.currentTeamIndex + 1) % this.teams.length;
+    this.currentTeam = this.teams[this.currentTeamIndex];
 }
 
 Game.prototype.startTurn = function() {
@@ -245,19 +272,19 @@ Game.prototype.startTurn = function() {
 
     this.sendToAll('startTurn',
         {currentTeamId: this.currentTeam.id,
-            currentPlayerId: this.currentPlayer.id});
+            currentPlayerId: this.currentPlayer.id,
+        currentPlayerName: this.currentPlayer.name});
     this.sendToAll('updateCurrentTurnScore',
         {score: utils.sumPoints(this.currentCorrectCards)})
     this.drawNewCard();
 
     this.turnTimer = new Date().getTime() + 1000 * 60;
     let self = this;
-    let timer = setInterval(function() {
+    this.timerHandler = setInterval(function() {
         let now = new Date().getTime();
         let timeLeft = self.turnTimer - now;
         if (timeLeft < 0) {
-            self.sendToAll('endTurn')
-            clearInterval(timer);
+            self.endTurn();
         } else {
             self.sendToAll('updateTurnTimer', {timeLeft: timeLeft})
         }
@@ -265,12 +292,20 @@ Game.prototype.startTurn = function() {
 }
 
 Game.prototype.endTurn = function() {
+    if (this.timerHandler != null) {
+        clearInterval(this.timerHandler);
+        this.timerHandler = null;
+    }
     this.sendToAll('endTurn');
     this.currentTeam.cards.push(...this.currentCorrectCards);
     this.currentCorrectCards = [];
     this.deck.reset();
     if (this.deck.isEmpty()) {
-        this.sendToAll('endRound');
+        this.endRound();
+    } else {
+        this.turn++;
+        this.setNextTeam();
+        this.startTurn();
     }
 }
 
@@ -297,6 +332,28 @@ Game.prototype.drawNewCard = function() {
             }
         }
     );
+}
+
+Game.prototype.endRound = function() {
+    this.sendToAll('endRound');
+    let self = this;
+    this.teams.forEach(function(team) {
+       team.score += utils.sumPoints(team.cards);
+       team.cards.forEach(function(card) {
+           self.deck.discard(card);
+       });
+    });
+    this.deck.reset();
+    this.currentRoundNum++;
+    if (this.currentRoundNum <= 3) {
+        this.startRound();
+    } else {
+        this.endGame();
+    }
+}
+
+Game.prototype.endGame = function() {
+    this.sendToAll('endGame');
 }
 
 module.exports = Game;
