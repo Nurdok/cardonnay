@@ -167,7 +167,7 @@ Game.prototype.getNextId = function() {
     return this.currentPlayerId++;
 };
 
-Game.prototype.getJsonGame = function() {
+Game.prototype.getJson = function() {
     let players = [];
     this.players.forEach(function(player) {
         players.push(player.getJson());
@@ -190,7 +190,7 @@ Game.prototype.getJsonGame = function() {
 
 Game.prototype.sendUpdatedPlayersList = function() {
     this.sendToAll("updatePlayerList", {
-        players: this.getJsonGame().players
+        players: this.getJson().players
     });
 };
 
@@ -202,6 +202,7 @@ Game.prototype.sendToAll = function(event, data) {
             event: event,
             gameCode: self.code,
             player: player.getJson(),
+            game: self.getJson(),
             data
         });
     });

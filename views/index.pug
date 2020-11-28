@@ -7,11 +7,15 @@ block content
   <input id="username" autocomplete="off" /><button>Send</button>
   </form>
   div(id="gameInfo")
-    p() Current round:
+    p() Current round:&nbsp;
       span(id="currentRoundNum")
   p(id="clock")
-  h2 Connected Users
-  ul(id="userList")
+  div(id="connectedUsers")
+    h2 Connected Users
+    ul(id="userList")
+  div(id="teams")
+    h2 Teams
+    ul(id="teamList")
   button(type="button", id="startGameButton") Start Game
   div(id="cardDiv", class="card")
     p(id="cardText")

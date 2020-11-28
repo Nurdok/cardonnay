@@ -83,6 +83,29 @@ $(function () {
        socket.emit('hostStartGame');
     });
 
+    function updateTeams(teams, currentTeamId, currentPlayerId) {
+        $('#connectedUsers').hide();
+        let teamList = $('#teamList');
+        teamList.empty();
+        teams.forEach(team => {
+            let teamItem = $('<li>');
+            teamItem.text('Team ' + team.id + ' (score: ' + team.score + ')');
+            if (currentTeamId === team.id) {
+                teamItem.wrapInner('<b />')
+            }
+            let playerList = $('<ul>');
+            team.players.forEach(player => {
+                let playerItem = $('<li>').text(player.name);
+                if (currentPlayerId === player.id) {
+                    playerItem.wrapInner('<b />')
+                }
+                playerList.append(playerItem);
+            });
+            teamItem.append(playerList);
+            teamList.append(teamItem);
+        })
+    }
+
     socket.on('startRound', function(data) {
         startGameButton.hide();
         $('#welcome').text('Hi, ' + myUsername +
@@ -96,16 +119,8 @@ $(function () {
         let player = data.data.player;
         let currentCard = data.data.currentCard;
 
-        let text = 'Hi, ' + myUsername + '!\n';
-        if (data.data.currentPlayerId == data.player.id) {
-            text += "You're the current player!";
-        } else if (data.data.currentTeamId == myTeamId) {
-            text += "Your team member (" + data.data.currentPlayerName + ") is up, guess away!";
-        } else {
-            text += "The other team is playing (" + data.data.currentPlayerName + " is up), don't interrupt";
-        }
-
-        $('#welcome').text(text);
+        $('#welcome').text('Hi, ' + myUsername + '!');
+        updateTeams(data.game.teams, data.data.currentTeamId, data.data.currentPlayerId);
     });
 
     function checkTime(i) {
