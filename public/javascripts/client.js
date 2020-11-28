@@ -30,13 +30,30 @@ $(function () {
     let currentTimerEnd = null;
     let updateTimer = null;
 
+    function setUsername(name) {
+        myUsername = name;
+        socket.emit('new user', myUsername);
+    }
+
+    function getUsernameFromUrl() {
+        const url = new URL(window.location.href);
+        const name = url.searchParams.get("name");
+        console.log('Name from URL: ' + name);
+        return name;
+    }
+
+    if (getUsernameFromUrl() != null) {
+        $('#usernameForm').hide();
+        setUsername(getUsernameFromUrl());
+    }
+
     $('#usernameForm').submit(function (e) {
         e.preventDefault(); // prevents page reloading
         console.log('emitting new user msg');
         let usernameElement = $('#username');
+        setUsername(usernameElement.val());
         myUsername = usernameElement.val();
         $('#welcome').text('Hi, ' + myUsername + '!');
-        socket.emit('new user', myUsername);
         $('#usernameForm').hide();
         return false;
     });
