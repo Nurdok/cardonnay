@@ -26,7 +26,6 @@ Player.prototype.send = function(event, data) {
 
 Player.prototype.sendThen = function(event, data, onEvent, next) {
     this.socket.once(onEvent, next);
-    console.log("\n\n\ndata:\n", data, "\n\n");
     this.send(event, data);
 };
 
