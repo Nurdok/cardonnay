@@ -1,41 +1,18 @@
+const csvToJson = require('csvtojson');
+
 let Player = require('./player');
 let Team = require('./team');
 let Deck = require('./deck');
 const utils = require('./utils');
 const assert = require('assert').strict;
 
-const CARDS = [
-    {text: 'Sean Connery', points: 1},
-    {text: 'Sliders', points: 2},
-    {text: 'Internet Explorer', points: 2},
-    {text: 'Noise Cancelling Headphones', points: 2},
-    {text: 'Netflix and Chill', points: 3},
-    {text: 'Debate Club', points: 2},
-    {text: 'George Carlin', points: 2},
-    {text: 'Getting Things Done™', points: 4},
-    {text: 'Keying Your Ex-Wife\'s Car', points: 4},
-    {text: 'Harrison Ford', points: 1},
-    {text: 'The Star Wars Prequels', points: 2},
-    {text: 'Warm Apple Pie', points: 2},
-    {text: 'The Mission Impossible Theme', points: 3},
-    {text: '64K Modem', points: 2},
-    {text: 'Donald J. Trump', points: 1},
-    {text: 'Trying To Get Your Team To Guess Your Card', points: 4},
-    {text: 'Koreans Playing StarCraft', points: 4},
-    {text: 'How I Met Your Mother', points: 1},
-    {text: 'Rocky\'s Horror Picture Show', points: 2},
-    {text: 'Lightning Rod', points: 2},
-    {text: 'Watching Paint Dry', points: 2},
-    {text: 'Mechanical Keyboard', points: 3},
-    {text: 'Joseph Gordon-Levitt', points: 2},
-    {text: 'Zooey Deschanel', points: 2},
-    {text: 'Linus Torvalds', points: 2},
-    {text: 'Guido Van Rossum', points: 3},
-    {text: 'Halloween', points: 1},
-    {text: 'Mel Brooks', points: 2},
-    {text: 'Libertarianism', points: 2},
-    {text: 'Ayn Rand', points: 3},
-];
+
+async function loadCardsFromFile(path) {
+    return await csvToJson(
+      {colParser:{
+        "text":"string",
+        "points":"number"}}).fromFile(path);
+}
 
 function Game(code, onEmpty) {
     this.code = code;
@@ -234,10 +211,11 @@ Game.prototype.allocatePlayersToTeams = function() {
     }
 }
 
-Game.prototype.startGame = function() {
+Game.prototype.startGame = async function() {
     this.inProgress = true;
     this.currentRoundNum = 1;
-    this.deck = new Deck(CARDS);
+    let card_list = await loadCardsFromFile('cards.csv');
+    this.deck = new Deck(card_list);
     this.allocatePlayersToTeams();
     this.startRound();
 }
