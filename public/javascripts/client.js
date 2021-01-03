@@ -179,6 +179,11 @@ $(function () {
         cardDiv.hide();
         currentTurnScore.hide();
     });
+    
+    socket.on('newCard', function(data) {
+        console.log("fkjsdflkjsd");
+        console.log(data);
+    });
 
     socket.on('endRound', function(data) {
 

@@ -1,5 +1,6 @@
-const csv = require('fast-csv');
-const fs = require('fs')
+const fs = require('fs');
+const parse = require('csv-parse');
+const streamToPromise = require('stream-to-promise');
 
 let Player = require('./player');
 let Team = require('./team');
@@ -9,14 +10,29 @@ const assert = require('assert').strict;
 
 
 async function loadCardsFromFile(path) {
-    let cards = []
-    let stream = fs.createReadStream(path);
-    await csv.parseStream(stream, {headers:true})
-        .on("data", function(data) {
-            cards.push(data)
-        });
-    return cards;
+    records = []
+    const parser = fs
+    .createReadStream(path)
+    .pipe(parse({
+      headers:true
+    }));
+    parser.on('readable', function(){
+      let record;
+      while (record = parser.read()) {
+        records.push(record)
+      }
+    });
+    await streamToPromise(parser);
+    return records;
 }
+//     let cards = []
+//     // let stream = fs.readFile(path);
+//     await csv.parseFile(path, {headers:true})
+//         .on("data", function(data) {
+//             cards.push(data)
+//         }).on("end", () => {console.log("fsdlkfsdkds")});
+//     return cards;
+// }
 
 function Game(code, onEmpty) {
     this.code = code;
@@ -200,6 +216,7 @@ Game.prototype.getTeamById = function(id) {
 }
 
 Game.prototype.allocatePlayersToTeams = function() {
+    console.log("\n\n\nasdf:",this.players.length,"\n\n\n")
     let teamAllocation = utils.genTeamAllocation(this.players.length);
     console.log('teamAllocation: ' + teamAllocation);
     for (let i = 0; i < this.players.length; i++) {
@@ -215,11 +232,12 @@ Game.prototype.allocatePlayersToTeams = function() {
     }
 }
 
-Game.prototype.startGame = function() {
+Game.prototype.startGame = async function() {
     this.inProgress = true;
     this.currentRoundNum = 1;
-    this.deck = await loadCardsFromFile('cards.csv');
-    console.log(this.deck)
+    let card_list = await loadCardsFromFile('cards.csv');
+    this.deck = new Deck(card_list);
+    console.log("bla\n", this.deck, "\n\n\n");
     this.allocatePlayersToTeams();
     this.startRound();
 }
@@ -293,7 +311,9 @@ Game.prototype.endTurn = function() {
 }
 
 Game.prototype.drawNewCard = function() {
+    console.log("im here:", "\n\n\ndeck:\n",this.deck, "\n\n\n");
     this.currentCard = this.deck.draw();
+    console.log("im here:", "\n\n\ndeck:\n",this.currentCard, "\n\n\n");
     let self = this;
 
     this.currentPlayer.sendThen(

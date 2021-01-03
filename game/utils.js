@@ -17,6 +17,7 @@ function genTeamAllocation(length) {
         }
     }
     shuffleArray(teamAllocation);
+    console.log("\n\n\njkl:", teamAllocation, "\n\n\n")
     return teamAllocation;
 }
 
